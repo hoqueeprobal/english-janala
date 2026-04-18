@@ -26,3 +26,17 @@ function showLessons(lessons) {
 }
 
 fetchLessons();
+
+// API call to fetch word cards of a lesson
+function fetchWordCards(levelNo){
+    inactiveAllBtn();
+    const selectedButton = document.querySelector(`.lesson-btn-${levelNo}`);
+    selectedButton.classList.add('btn-active');
+
+    wordCards.innerHTML = '<span class="loading loading-dots loading-xl col-span-full mx-auto mt-12"></span>';
+
+    const url = `https://openapi.programming-hero.com/api/level/${levelNo}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(json => showWordCards(json.data));
+}
