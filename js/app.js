@@ -40,3 +40,6 @@ function fetchWordCards(levelNo){
         .then(res => res.json())
         .then(json => showWordCards(json.data));
 }
+
+// Setup word container
+const wordCards = document.getElementById('word-cards');
