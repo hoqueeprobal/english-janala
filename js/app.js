@@ -99,3 +99,19 @@ async function fetchWordDetails(id){
     const json = await response.json();
     modalContents(json.data);
 }
+
+// Show modal content
+function modalContents(word){
+    const modalCont = document.querySelector('.modal-contents');
+
+    modalCont.innerHTML = `
+    <h3 class="text-3xl font-bold">${word.word} (${word.pronunciation})</h3>
+    <p>${word.meaning}</p>
+    <p>${word.sentence}</p>
+    <div>
+        ${word.synonyms.map(s => `<span>${s}</span>`).join(' ')}
+    </div>
+    `;
+
+    document.querySelector('#my_modal_5').showModal();
+}
