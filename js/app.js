@@ -83,3 +83,11 @@ const showWordCards = (words) => {
     wordCards.appendChild(card);
   }
 };
+
+// Handle active lesson button
+const inactiveAllBtn = () => {
+  const lessonsBtn = document.querySelectorAll(".lessons-btn");
+  for (let btn of lessonsBtn) {
+    btn.classList.remove("btn-active");
+  }
+};
