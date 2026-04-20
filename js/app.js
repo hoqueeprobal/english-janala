@@ -91,3 +91,11 @@ const inactiveAllBtn = () => {
     btn.classList.remove("btn-active");
   }
 };
+
+// Fetch word details
+async function fetchWordDetails(id){
+    const url = `https://openapi.programming-hero.com/api/word/${id}`;
+    const response = await fetch(url);
+    const json = await response.json();
+    modalContents(json.data);
+}
