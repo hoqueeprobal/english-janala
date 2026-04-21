@@ -136,3 +136,10 @@ document.getElementById('search-button').addEventListener('click', async () => {
 
     showWordCards(matchedWords);
 });
+
+// Add speech feature
+function pronounceWord(word) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = "en-EN";
+    window.speechSynthesis.speak(utterance);
+}
