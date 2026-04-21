@@ -47,6 +47,7 @@ const wordCards = document.getElementById("word-cards");
 
 // Render word cards
 const showWordCards = (words) => {
+  currentWords = words;
   wordCards.innerHTML = "";
 
   if (words.length <= 0) {
@@ -77,6 +78,10 @@ const showWordCards = (words) => {
                 <button onclick="pronounceWord('${word.word}')" class="btn bg-[#1A91FF20] p-4">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
+              <button onclick="addBookmarkById(${word.id})"
+                  class="btn bg-yellow-100 p-4">
+                <i class="fa-solid fa-bookmark"></i>
+               </button>
             </div>
         </div>`;
 
@@ -93,53 +98,115 @@ const inactiveAllBtn = () => {
 };
 
 // Fetch word details
-async function fetchWordDetails(id){
-    const url = `https://openapi.programming-hero.com/api/word/${id}`;
-    const response = await fetch(url);
-    const json = await response.json();
-    modalContents(json.data);
+async function fetchWordDetails(id) {
+  const url = `https://openapi.programming-hero.com/api/word/${id}`;
+  const response = await fetch(url);
+  const json = await response.json();
+  modalContents(json.data);
 }
 
 // Show modal content
-function modalContents(word){
-    const modalCont = document.querySelector('.modal-contents');
+function modalContents(word) {
+  const modalCont = document.querySelector(".modal-contents");
 
-    modalCont.innerHTML = `
+  modalCont.innerHTML = `
     <h3 class="text-3xl font-bold">${word.word} (${word.pronunciation})</h3>
     <p>${word.meaning}</p>
     <p>${word.sentence}</p>
     <div>
-        ${word.synonyms.map(s => `<span>${s}</span>`).join(' ')}
+        ${word.synonyms.map((s) => `<span>${s}</span>`).join(" ")}
     </div>
     `;
 
-    document.querySelector('#my_modal_5').showModal();
+  document.querySelector("#my_modal_5").showModal();
 }
 
 // Search functionality
-const searchInput = document.getElementById('search-value');
+const searchInput = document.getElementById("search-value");
 
-document.getElementById('search-button').addEventListener('click', async () => {
-    const searchValue = searchInput.value.trim();
+document.getElementById("search-button").addEventListener("click", async () => {
+  const searchValue = searchInput.value.trim();
 
-    if(!searchValue){
-        alert('type something and then search!');
-        return;
-    }
+  if (!searchValue) {
+    alert("type something and then search!");
+    return;
+  }
 
-    const response = await fetch('https://openapi.programming-hero.com/api/words/all');
-    const json = await response.json();
+  const response = await fetch(
+    "https://openapi.programming-hero.com/api/words/all",
+  );
+  const json = await response.json();
 
-    const matchedWords = json.data.filter(word =>
-        word.word.includes(searchValue)
-    );
+  const matchedWords = json.data.filter((word) =>
+    word.word.includes(searchValue),
+  );
 
-    showWordCards(matchedWords);
+  showWordCards(matchedWords);
 });
 
 // Add speech feature
 function pronounceWord(word) {
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-EN";
-    window.speechSynthesis.speak(utterance);
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN";
+  window.speechSynthesis.speak(utterance);
+}
+
+// Bookmark state
+let bookmarks = [];
+let currentWords = [];
+
+// Add bookmark by word id
+async function addBookmarkById(id) {
+  const res = await fetch(
+    `https://openapi.programming-hero.com/api/word/${id}`,
+  );
+  const json = await res.json();
+
+  const word = json.data;
+
+  // duplicate check
+  const exists = bookmarks.find((b) => b.id === word.id);
+  if (exists) {
+    alert("Already bookmarked!");
+    return;
+  }
+
+  bookmarks.push(word);
+
+  alert(`${word.word} added to bookmarks`);
+}
+
+// Show bookmarks in a modal
+function showBookmarks() {
+  wordCards.innerHTML = "";
+
+  if (bookmarks.length === 0) {
+    wordCards.innerHTML = `
+      <div class="col-span-full text-center p-10">
+        <h2 class="text-2xl font-bold">No bookmarks yet</h2>
+      </div>
+    `;
+    return;
+  }
+
+  bookmarks.forEach((word) => {
+    const card = document.createElement("div");
+    card.classList.add("card", "bg-white", "shadow-sm");
+
+    card.innerHTML = `
+      <div class="card-body lg:p-10">
+        <h2 class="card-title text-3xl mx-auto">${word.word}</h2>
+        <p class="text-xl my-4">${word.meaning}</p>
+
+        <div class="card-actions justify-center mt-6">
+          <button onclick="removeBookmark(${word.id})"
+            class="btn btn-error btn-sm">
+            Remove
+          </button>
+        </div>
+      </div>
+    `;
+
+    wordCards.appendChild(card);
+  });
 }
