@@ -115,3 +115,24 @@ function modalContents(word){
 
     document.querySelector('#my_modal_5').showModal();
 }
+
+// Search functionality
+const searchInput = document.getElementById('search-value');
+
+document.getElementById('search-button').addEventListener('click', async () => {
+    const searchValue = searchInput.value.trim();
+
+    if(!searchValue){
+        alert('type something and then search!');
+        return;
+    }
+
+    const response = await fetch('https://openapi.programming-hero.com/api/words/all');
+    const json = await response.json();
+
+    const matchedWords = json.data.filter(word =>
+        word.word.includes(searchValue)
+    );
+
+    showWordCards(matchedWords);
+});
