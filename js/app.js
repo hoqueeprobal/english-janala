@@ -210,3 +210,9 @@ function showBookmarks() {
     wordCards.appendChild(card);
   });
 }
+
+// Remove bookmark by id
+function removeBookmark(id) {
+  bookmarks = bookmarks.filter((word) => word.id !== id);
+  showBookmarks();
+}
